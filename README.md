@@ -1,7 +1,5 @@
 # Getting Started - Cheat Sheet
 
-In most of the videos we use the commands below to
-
 1. Clone this project `https://github.com/bjose2345/python-scrapy-crawler.git`
 2. Create a Python Virtual Environment: `python3 -m venv venv`
 3. Activate the Python Virtual Environment: `source venv/bin/activate`
