@@ -7,13 +7,15 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import time
+
 BOT_NAME = "as_scraper"
 
 SPIDER_MODULES = ["as_scraper.spiders"]
 NEWSPIDER_MODULE = "as_scraper.spiders"
 
 FEEDS = {
-    'as_data.json': {'format': 'json'}
+    'as_data_' + str(int(time.time())) + '.json': {'format': 'json'}
 }
 
 SCRAPEOPS_API_KEY = '1d7043a4-1314-47aa-8a80-8c72a6859242'

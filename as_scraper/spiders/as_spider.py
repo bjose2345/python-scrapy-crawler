@@ -1,6 +1,5 @@
 import scrapy
 import re
-import random
 from as_scraper.items import PostItem
 
 MAX_PAGE_NUM = 2
