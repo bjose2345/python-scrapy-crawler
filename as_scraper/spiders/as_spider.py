@@ -1,23 +1,25 @@
 import scrapy
 import re
-from as_scraper.items import PostItem
+from as_scraper.items import PostItem, PostMetaItem
 
-MAX_PAGE_NUM = 2
+MAX_PAGE_NUM = 1
 
-class AsSpiderSpider(scrapy.Spider):
+class AsSpider(scrapy.Spider):
     name = "as_spider"
     allowed_domains = ["anime-sharing.com"]
     start_urls = ["https://www.anime-sharing.com/forums/hentai-games.38/"]
 
     def parse(self, response):
-        posts = response.css('div.structItemContainer div.structItem-title')
 
-        for post in posts:
-            a_list = post.css('a::attr(href)').getall()
+        threads = response.css('div.structItemContainer div.structItem-title')
+
+        for thread in threads:
+            a_list = thread.css('a::attr(href)').getall()
             relative_url = "".join(filter(lambda x: 'threads' in x, a_list))
             if(relative_url):
-                post_url = 'https://www.anime-sharing.com' + relative_url
-                yield response.follow(post_url, callback=self.parse_post_detail)
+                thread_url = 'https://www.anime-sharing.com' + relative_url
+                
+                yield response.follow(thread_url, callback=self.parse_post_detail)
 
         next_page_response = response.css('li.pageNav-page--later a::attr(href)').get() #'/forums/hentai-games.38/page-?
         next_page = next_page_response.rpartition('/')[2] #page-?        
@@ -30,8 +32,17 @@ class AsSpiderSpider(scrapy.Spider):
     def parse_post_detail(self, response):
 
         post_item = PostItem()
-        
-        post_item['title'] = response.css('.p-title h1::text').get()
-        post_item['external_links'] = response.css('div.message-inner a.link--external::attr(href)').getall()
 
+        post_item['title'] = response.css('.p-title h1::text').get()
+        messages = response.css('article.message--post')
+
+        meta_items = []
+        for message in messages:
+            post_meta_item = PostMetaItem()
+            post_meta_item['post_id'] = message.css('article.message--post::attr(data-content)').get()            
+            post_meta_item['created_date'] = message.css('li.u-concealed time.u-dt::attr(data-time)').get()
+            post_meta_item['external_links'] = message.css('article.message--post  a.link--external::attr(href)').getall()
+            meta_items.append(post_meta_item)
+        
+        post_item['meta'] = meta_items
         yield post_item
