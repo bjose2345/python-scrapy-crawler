@@ -33,6 +33,7 @@ class AsSpider(scrapy.Spider):
 
         post_item = PostItem()
 
+        post_item['thread_id'] = response.css('div.block-container::attr(data-lb-id)').get()
         post_item['title'] = response.css('.p-title h1::text').get()
         messages = response.css('article.message--post')
 

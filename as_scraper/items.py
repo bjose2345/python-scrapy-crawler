@@ -17,6 +17,7 @@ class PostMetaItem(scrapy.Item):
     external_links = scrapy.Field()
 
 class PostItem(scrapy.Item):
+    thread_id = scrapy.Field()
     title = scrapy.Field()
     meta = scrapy.Field() # This field will store a list of PostMetaItem objects
 

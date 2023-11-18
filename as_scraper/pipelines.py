@@ -6,10 +6,21 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from scrapy.exceptions import DropItem
 import re
 
-WHITELIST_LINKS = ['rapidgator.net','katfile.com','rosefile.net','mexa.sh','fikper.com','ddownload.com','k2s.cc','fboom.me']
+WHITELIST_LINKS = [
+    'rapidgator.net',
+    'katfile.com',
+    'rosefile.net',
+    'mexa.sh',
+    'fikper.com',
+    'ddownload.com',
+    'k2s.cc',
+    'fboom.me',
+    'mega.nz',
+    'ul.to',
+    'uploadrocket.net'
+]
 
 class AsScraperPipeline:
     def process_item(self, item, spider):
@@ -20,12 +31,12 @@ class AsScraperPipeline:
         value = adapter.get('title')        
         adapter['title'] = value.strip()
             
-        ## remove unnecessary links
+        ## remove external links that are in the whitelist
         whitelist = re.compile('|'.join([re.escape(word) for word in WHITELIST_LINKS]))        
         meta_values = adapter.get('meta')
         for meta_value in meta_values:
             filtered_external_links = [word for word in meta_value['external_links'] if whitelist.search(word)]
-            # remove message if not external links
+            # remove post message if it has no any external link that are in the whitelist
             if not filtered_external_links:
                 meta_values.remove(meta_value)
             meta_value['external_links'] = filtered_external_links
