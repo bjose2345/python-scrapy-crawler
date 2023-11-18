@@ -35,10 +35,6 @@ class AsScraperPipeline:
         whitelist = re.compile('|'.join([re.escape(word) for word in WHITELIST_LINKS]))        
         meta_values = adapter.get('meta')
         for meta_value in meta_values:
-            filtered_external_links = [word for word in meta_value['external_links'] if whitelist.search(word)]
-            # remove post message if it has no any external link that are in the whitelist
-            if not filtered_external_links:
-                meta_values.remove(meta_value)
-            meta_value['external_links'] = filtered_external_links
+            meta_value['external_links'] = [word for word in meta_value['external_links'] if whitelist.search(word)]
                   
         return item

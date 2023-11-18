@@ -12,12 +12,13 @@ class AsScraperItem(scrapy.Item):
     pass
 
 class PostMetaItem(scrapy.Item):
-    post_id = scrapy.Field()
+    post_id = scrapy.Field()    
     created_date = scrapy.Field()
     external_links = scrapy.Field()
 
 class PostItem(scrapy.Item):
-    thread_id = scrapy.Field()
+    thread_id = scrapy.Field()    
     title = scrapy.Field()
+    page = scrapy.Field()
     meta = scrapy.Field() # This field will store a list of PostMetaItem objects
 
