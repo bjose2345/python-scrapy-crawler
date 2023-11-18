@@ -22,7 +22,7 @@ WHITELIST_LINKS = [
     'uploadrocket.net'
 ]
 
-class AsScraperPipeline:
+class AsScraperFormatPipeline:
     def process_item(self, item, spider):
 
         adapter = ItemAdapter(item)
@@ -31,10 +31,23 @@ class AsScraperPipeline:
         value = adapter.get('title')        
         adapter['title'] = value.strip()
             
-        ## remove external links that are in the whitelist
+        ## remove external links that aren't in the whitelist
         whitelist = re.compile('|'.join([re.escape(word) for word in WHITELIST_LINKS]))        
         meta_values = adapter.get('meta')
         for meta_value in meta_values:
             meta_value['external_links'] = [word for word in meta_value['external_links'] if whitelist.search(word)]
                   
         return item
+    
+class CleanEmptyPostsPipeline:
+   
+    def process_item(self, item, spider):
+
+        adapter = ItemAdapter(item)
+        
+        meta_values = adapter.get('meta')
+        for meta_value in meta_values:
+            if not meta_value['external_links']:
+                meta_values.remove(meta_value)
+
+        return item        
