@@ -81,6 +81,7 @@ EXTENSIONS = {
 ITEM_PIPELINES = {
    "as_scraper.pipelines.AsScraperFormatPipeline": 100,
    "as_scraper.pipelines.CleanEmptyPostsPipeline": 200,
+   "as_scraper.pipelines.MongoDBPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -6,7 +6,7 @@
 4. Install Scrapy using pip: `pip install scrapy`
 5. To install the required modules for this python project to run you need to install the required python modules using the following command: `pip install -r requirements.txt`
 6. Listing the scrapy projects `scrapy list`
-7. Running the scrapy project: `scrapy crawl as_spider`
+7. Running the scrapy project: `scrapy crawl -s MONGODB_URI="mongodb+srv://<YOUR_CONNECTION_STRING>" -s MONGODB_DATABASE="scrapy" as_spider`
 
 # Helpful Dubugging
 

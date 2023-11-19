@@ -6,7 +6,11 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+import sys
+import os
 import re
+import pymongo
+from as_scraper.items import PostItem
 
 WHITELIST_LINKS = [
     'rapidgator.net',
@@ -50,4 +54,34 @@ class CleanEmptyPostsPipeline:
             if not meta_value['external_links']:
                 meta_values.remove(meta_value)
 
-        return item        
+        return item
+
+class MongoDBPipeline:
+
+    collection_name = "as_items"
+
+    def __init__(self, mongodb_uri, mongodb_db):
+        self.mongodb_uri = mongodb_uri
+        self.mongodb_db = mongodb_db
+        if not self.mongodb_uri: sys.exit("You need to provide a Connection String.")
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            mongodb_uri=crawler.settings.get('MONGODB_URI'),
+            mongodb_db=crawler.settings.get('MONGODB_DATABASE', 'as_items')
+        )
+
+    def open_spider(self, spider):
+        self.mongo_username = os.environ['MONGODB_USERNAME']
+        self.mongo_password = os.environ['MONGODB_PASSWORD']
+        self.client = pymongo.MongoClient(
+            self.mongodb_uri, username=self.mongo_username, password=self.mongo_password)
+        self.db = self.client[self.mongodb_db]
+
+    def close_spider(self, spider):
+        self.client.close()
+
+    def process_item(self, item, spider):
+        self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+        return item    
