@@ -10,7 +10,7 @@ import sys
 import os
 import re
 import pymongo
-from as_scraper.items import PostItem
+from bson.json_util import dumps
 
 WHITELIST_LINKS = [
     'rapidgator.net',
@@ -83,5 +83,12 @@ class MongoDBPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+        exists = self.db[self.collection_name].find_one({'thread_id': dict(item)['thread_id']}, {'_id': False, 'thread_id': True})
+        if not exists:
+            ## insert if not exists
+            self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+        else:
+            ## $addToSet operator adds a value to an array unless the value is already present 
+            ## in which case $addToSet does nothing to that array.
+            self.db[self.collection_name].update_one(exists, {'$addToSet': {'meta': {'$each': item['meta'] }}})
         return item    
