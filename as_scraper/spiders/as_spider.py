@@ -11,24 +11,28 @@ class AsSpider(scrapy.Spider):
     start_urls = ["https://www.anime-sharing.com/forums/hentai-games.38/"]
 
     def parse(self, response):
+
+        # test thread with mutliple posts
+        thread_url = 'https://www.anime-sharing.com/threads/hentaimasters-collection-thread.504066/'
+        yield response.follow(thread_url, callback=self.parse_post_detail)
          
-        threads = response.css('div.structItemContainer div.structItem-title')
+        # threads = response.css('div.structItemContainer div.structItem-title')
 
-        for thread in threads:
-            a_list = thread.css('a::attr(href)').getall()
-            relative_url = "".join(filter(lambda x: 'threads' in x, a_list))
-            if(relative_url):
-                thread_url = 'https://www.anime-sharing.com' + relative_url
+        # for thread in threads:
+        #     a_list = thread.css('a::attr(href)').getall()
+        #     relative_url = "".join(filter(lambda x: 'threads' in x, a_list))
+        #     if(relative_url):
+        #         thread_url = 'https://www.anime-sharing.com' + relative_url
                 
-                yield response.follow(thread_url, callback=self.parse_post_detail)
+        #         yield response.follow(thread_url, callback=self.parse_post_detail)
 
-        next_page_response = response.css('li.pageNav-page--later a::attr(href)').get() #'/forums/hentai-games.38/page-?
-        next_page = next_page_response.rpartition('/')[2] #page-?        
-        next_page_number = re.sub(r"\D", "", next_page) #?
+        # next_page_response = response.css('li.pageNav-page--later a::attr(href)').get() #'/forums/hentai-games.38/page-?
+        # next_page = next_page_response.rpartition('/')[2] #page-?        
+        # next_page_number = re.sub(r"\D", "", next_page) #?
         
-        if int(next_page_number) <= THREAD_MAX_PAGE_NUM:
-            next_page_url = response.request.url + next_page            
-            yield response.follow(next_page_url, callback= self.parse)
+        # if int(next_page_number) <= THREAD_MAX_PAGE_NUM:
+        #     next_page_url = response.request.url + next_page            
+        #     yield response.follow(next_page_url, callback= self.parse)
 
     def parse_post_detail(self, response):
 

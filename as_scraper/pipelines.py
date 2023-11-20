@@ -88,7 +88,17 @@ class MongoDBPipeline:
             ## insert if not exists
             self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
         else:
-            ## $addToSet operator adds a value to an array unless the value is already present 
-            ## in which case $addToSet does nothing to that array.
-            self.db[self.collection_name].update_one(exists, {'$addToSet': {'meta': {'$each': item['meta'] }}})
+            ## adds a new entry to META array unless the value is already present 
+            ## in which case $PUSH does nothing to that array.
+            meta_values = dict(item)['meta']
+            self.db[self.collection_name].update_one(exists,
+            [
+                {'$set':  {'meta':  {'$concatArrays': [ 
+                    "$meta",  
+                    {'$filter': {
+                            'input': meta_values,
+                            'cond': {'$not': {'$in': [ '$$this.post_id', '$meta.post_id' ]}} 
+                    }}
+                ]}}}
+            ])
         return item    
