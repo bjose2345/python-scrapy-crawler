@@ -87,10 +87,17 @@ class MongoDBPipeline:
         if not exists:
             ## insert if not exists
             self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
-        else:
-            ## adds a new entry to META array unless the value is already present 
-            ## in which case $PUSH does nothing to that array.
+        else:            
             meta_values = dict(item)['meta']
+            ## Remove an entry from META array when created_date is different from
+            ## meta_values created_date object            
+            for meta_value in meta_values:
+                self.db[self.collection_name].update_one(exists,
+                     {'$pull': {'meta': {'$and': [{'post_id': {'$eq': meta_value['post_id']}}, {'created_date': {'$ne': meta_value['created_date']}}]}}}
+                )
+            
+            ## adds a new entry to META array unless the value is already present 
+            ## in which case $SET does nothing to that array.
             self.db[self.collection_name].update_one(exists,
             [
                 {'$set':  {'meta':  {'$concatArrays': [ 

@@ -63,8 +63,8 @@ ROBOTSTXT_OBEY = False
 DOWNLOADER_MIDDLEWARES = {
    "as_scraper.middlewares.AsScraperDownloaderMiddleware": 543,
    "as_scraper.middlewares.ScrapeOpsFakeBrowserHeaderAgentMiddleware": 400,
-   'scrapeops_scrapy.middleware.retry.RetryMiddleware': 550,
-   'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+   "scrapeops_scrapy.middleware.retry.RetryMiddleware": 550,
+   "scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
 }
 
 # Enable or disable extensions
@@ -73,7 +73,7 @@ DOWNLOADER_MIDDLEWARES = {
 #    "scrapy.extensions.telnet.TelnetConsole": None,
 #}
 EXTENSIONS = {
-    'scrapeops_scrapy.extension.ScrapeOpsMonitor': 500, 
+    "scrapeops_scrapy.extension.ScrapeOpsMonitor": 500,
 }
 
 # Configure item pipelines
