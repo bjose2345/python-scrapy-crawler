@@ -1,0 +1,11 @@
+[{
+"enabled": "TRUE",
+"text": "<text placeholder>",
+"packageName": "<packageName placeholder>",
+"comment": "<comment placeholder>",
+"autoConfirm": "TRUE",
+"autoStart": "TRUE",
+"extractAfterDownload": "FALSE",
+"forcedStart": "FALSE",
+"overwritePackagizerEnabled": false
+}]

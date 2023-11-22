@@ -10,7 +10,8 @@ import sys
 import os
 import re
 import pymongo
-from bson.json_util import dumps
+import json
+from pathlib import Path
 
 WHITELIST_LINKS = [
     'rapidgator.net',
@@ -80,6 +81,34 @@ class MongoDBPipeline:
         self.db = self.client[self.mongodb_db]
 
     def close_spider(self, spider):
+
+        ## create a crawljob file for each one of the post found, stored and stage is null in mongodb
+        exports = self.db[self.collection_name].find({'meta.stage': None})
+        p = Path(__file__).with_name('crawljob.template')
+
+        if exports:
+            with p.open('r') as f:
+                template_json = f.read()
+
+            for export in exports:            
+                external_links = []
+                for meta_value in export['meta']:
+                    ## update stage to FETCHED status
+                    self.db[self.collection_name].update_one({'_id': export['_id'], 'meta.post_id': meta_value['post_id']}, {'$set': {'meta.$[].stage': 'FETCHED'}})
+                    external_links.append(meta_value['external_links'])
+                    
+                values = {
+                    'text': ','.join(str(v) for v in external_links),
+                    'packageName': export['thread_id'],
+                    'comment': export['title']
+                }
+
+                after_replace = re.sub('<(.+?) placeholder>', lambda match: values.get(match.group(1)), template_json)
+                filename = export['thread_id'] + '.crawljob'
+                
+                with open(filename, 'w') as f:
+                    f.write(after_replace)
+        
         self.client.close()
 
     def process_item(self, item, spider):
