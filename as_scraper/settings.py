@@ -70,8 +70,8 @@ DOWNLOADER_MIDDLEWARES = {
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 EXTENSIONS = {
-#    "scrapy.extensions.telnet.TelnetConsole": None,
-     "scrapeops_scrapy.extension.ScrapeOpsMonitor": 500,
+   #"scrapy.extensions.telnet.TelnetConsole": None,
+   "scrapeops_scrapy.extension.ScrapeOpsMonitor": 500,
 }
 
 # Configure item pipelines

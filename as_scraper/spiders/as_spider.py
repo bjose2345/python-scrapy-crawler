@@ -5,7 +5,21 @@ from as_scraper.items import PostItem, PostMetaItem
 THREAD_MAX_PAGE_NUM = 1
 PAGE_MAX_PAGE_NUM = 2
 
+PLATFORMS = [
+    'getchu.com',
+    'dlsite.com',
+    'fanza.net',
+    'dmm.co.jp'
+]
+
+DELIMETERS = ["/", "="]
+
 class AsSpider(scrapy.Spider):
+
+    def __init__(self):
+        self.platforms_whitelisted = re.compile('|'.join([re.escape(word) for word in PLATFORMS]))
+        self.pattern = "[" + re.escape("".join(DELIMETERS)) + "]"
+
     name = "as_spider"
     allowed_domains = ["anime-sharing.com"]
     start_urls = ["https://www.anime-sharing.com/forums/hentai-games.38/"]
@@ -36,11 +50,29 @@ class AsSpider(scrapy.Spider):
 
         post_item['thread_id'] = response.css('div.block-container::attr(data-lb-id)').get()
         post_item['title'] = response.css('.p-title h1::text').get()
+        post_item['platform'] = None
+        post_item['product_id'] = None
         messages = response.css('article.message--post')
 
         meta_items = []
         for message in messages:
             post_meta_item = PostMetaItem()
+            post_number = message.css('ul.message-attribution-opposite a::text')[2].get().strip()
+            ## search for the platform and platform_id in the first post
+            if(post_number=='#1'):
+                ## search for all the links that startwith http and end with any number
+                ## ex.
+                ## https://www.dlsite.com/maniax/work/=/product_id/RJ00000001.html
+                ## https://www.getchu.com/soft.phtml?id=000001
+                ## https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=d_000001/
+                all_links = re.findall('http.*?\d+',message.get())
+                print('all_links: ', all_links)
+                result = next(iter(word for word in all_links if self.platforms_whitelisted.search(word)), None)                
+                if result is not None:
+                    ## overwrite the default value in case we found something
+                    post_item['platform'] = next(iter(sub for sub in PLATFORMS if sub in result), None)                    
+                    post_item['product_id'] = re.split(self.pattern,result)[-1]
+
             post_meta_item['stage'] = None
             post_meta_item['post_id'] = message.css('article.message--post::attr(data-content)').get()            
             post_meta_item['created_date'] = message.css('li.u-concealed time.u-dt::attr(data-time)').get()

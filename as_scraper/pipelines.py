@@ -10,14 +10,13 @@ import sys
 import os
 import re
 import pymongo
-import json
 from pathlib import Path
 
-WHITELIST_LINKS = [
+FILEHOSTS = [
     'rapidgator.net',
-    'katfile.com',
-    'rosefile.net',
     'mexa.sh',
+    'katfile.com',
+    'rosefile.net',    
     'fikper.com',
     'ddownload.com',
     'k2s.cc',
@@ -37,10 +36,10 @@ class AsScraperFormatPipeline:
         adapter['title'] = value.strip()
             
         ## remove external links that aren't in the whitelist
-        whitelist = re.compile('|'.join([re.escape(word) for word in WHITELIST_LINKS]))        
+        filehosts_whitelisted = re.compile('|'.join([re.escape(word) for word in FILEHOSTS]))        
         meta_values = adapter.get('meta')
         for meta_value in meta_values:
-            meta_value['external_links'] = [word for word in meta_value['external_links'] if whitelist.search(word)]
+            meta_value['external_links'] = [word for word in meta_value['external_links'] if filehosts_whitelisted.search(word)]
                   
         return item
     
