@@ -126,15 +126,17 @@ class MongoDBPipeline:
                     self.db[self.collection_name].update_one({'details.post_id': post_id}, {'$set': {'details.$[].stage': 'FETCHED'}})
                     
                 values = {
-                    'text': '['+ ','.join(str(v) for v in export['external_links']) + ']',
+                    'text': '[' + ', '.join(str(x) for x in export['external_links']) + ']',
                     'packageName': export['_id'],
                     'comment': 'added in ' + today
                 }
 
                 after_replace = re.sub('<(.+?) placeholder>', lambda match: values.get(match.group(1)), template_json)
+                output = Path().resolve() / 'output'
+                output.mkdir(exist_ok=True)
                 filename = export['_id'] + '_' + today + '.crawljob'
                 
-                with open(filename, 'w') as f:
+                with open(output / filename, 'w') as f:
                     f.write(after_replace)
         
         self.client.close()
