@@ -9,6 +9,7 @@ from itemadapter import ItemAdapter
 import sys
 import os
 import re
+from datetime import datetime
 import pymongo
 from pathlib import Path
 
@@ -16,14 +17,14 @@ FILEHOSTS = [
     'rapidgator.net',
     'mexa.sh',
     'katfile.com',
-    'rosefile.net',    
     'fikper.com',
     'ddownload.com',
+    'uploadrocket.net',
+    'rosefile.net',
     'k2s.cc',
     'fboom.me',
     'mega.nz',
-    'ul.to',
-    'uploadrocket.net'
+    'ul.to'
 ]
 
 class AsScraperFormatPipeline:
@@ -37,9 +38,9 @@ class AsScraperFormatPipeline:
             
         ## remove external links that aren't in the whitelist
         filehosts_whitelisted = re.compile('|'.join([re.escape(word) for word in FILEHOSTS]))        
-        meta_values = adapter.get('meta')
-        for meta_value in meta_values:
-            meta_value['external_links'] = [word for word in meta_value['external_links'] if filehosts_whitelisted.search(word)]
+        details = adapter.get('details')
+        for detail in details:
+            detail['external_links'] = [word for word in detail['external_links'] if filehosts_whitelisted.search(word)]
                   
         return item
     
@@ -49,10 +50,10 @@ class CleanEmptyPostsPipeline:
 
         adapter = ItemAdapter(item)
         
-        meta_values = adapter.get('meta')
-        for meta_value in meta_values:
-            if not meta_value['external_links']:
-                meta_values.remove(meta_value)
+        details = adapter.get('details')
+        for detail in details:
+            if not detail['external_links']:
+                details.remove(detail)
 
         return item
 
@@ -81,29 +82,57 @@ class MongoDBPipeline:
 
     def close_spider(self, spider):
 
-        ## create a crawljob file for each one of the post found, stored and stage is null in mongodb
-        exports = self.db[self.collection_name].find({'meta.stage': None})
+        ## create a crawljob file for each one of the post found, with stage null and grouped by product_id
+        exports = self.db[self.collection_name].aggregate([
+            {
+                "$unwind": "$details"
+            },
+            {
+                "$unwind": "$details.external_links"
+            },    
+            {
+                "$match": {
+                  "product_id": {
+                    "$ne": None
+                  },
+                  "details.stage": None
+                }
+            },
+            {
+                "$group": {
+                  "_id": "$product_id",
+                  "post_id": {
+                    "$push": "$details.post_id"
+                  },
+                  "external_links": {
+                    "$push": "$details.external_links"
+                  }
+                }
+            }    
+        ])
+
+
         p = Path(__file__).with_name('crawljob.template')
 
         if exports:
+            today = datetime.today().strftime('%Y%m%d-%H%M%S')
+
             with p.open('r') as f:
                 template_json = f.read()
 
-            for export in exports:            
-                external_links = []
-                for meta_value in export['meta']:
+            for export in exports:
+                for post_id in export['post_id']:
                     ## update stage to FETCHED status
-                    self.db[self.collection_name].update_one({'_id': export['_id'], 'meta.post_id': meta_value['post_id']}, {'$set': {'meta.$[].stage': 'FETCHED'}})
-                    external_links.append(meta_value['external_links'])
+                    self.db[self.collection_name].update_one({'details.post_id': post_id}, {'$set': {'details.$[].stage': 'FETCHED'}})
                     
                 values = {
-                    'text': ','.join(str(v) for v in external_links),
-                    'packageName': export['thread_id'],
-                    'comment': export['title']
+                    'text': '['+ ','.join(str(v) for v in export['external_links']) + ']',
+                    'packageName': export['_id'],
+                    'comment': 'added in ' + today
                 }
 
                 after_replace = re.sub('<(.+?) placeholder>', lambda match: values.get(match.group(1)), template_json)
-                filename = export['thread_id'] + '.crawljob'
+                filename = export['_id'] + '_' + today + '.crawljob'
                 
                 with open(filename, 'w') as f:
                     f.write(after_replace)
@@ -116,23 +145,23 @@ class MongoDBPipeline:
             ## insert if not exists
             self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
         else:            
-            meta_values = dict(item)['meta']
-            ## Remove an entry from META array when created_date is different from
-            ## meta_values created_date object            
-            for meta_value in meta_values:
+            details = dict(item)['details']
+            ## Remove an document from DETAILS array when created_date is different from
+            ## details.created_date entry
+            for detail in details:
                 self.db[self.collection_name].update_one(exists,
-                     {'$pull': {'meta': {'$and': [{'post_id': {'$eq': meta_value['post_id']}}, {'created_date': {'$ne': meta_value['created_date']}}]}}}
+                     {'$pull': {'details': {'$and': [{'post_id': {'$eq': detail['post_id']}}, {'created_date': {'$ne': detail['created_date']}}]}}}
                 )
             
-            ## adds a new entry to META array unless the value is already present 
+            ## adds a new entry to DETAILS array unless the value is already present 
             ## in which case $SET does nothing to that array.
             self.db[self.collection_name].update_one(exists,
             [
-                {'$set':  {'meta':  {'$concatArrays': [ 
-                    "$meta",  
+                {'$set':  {'details':  {'$concatArrays': [ 
+                    "$details",  
                     {'$filter': {
-                            'input': meta_values,
-                            'cond': {'$not': {'$in': [ '$$this.post_id', '$meta.post_id' ]}} 
+                            'input': details,
+                            'cond': {'$not': {'$in': [ '$$this.post_id', '$details.post_id' ]}} 
                     }}
                 ]}}}
             ])
