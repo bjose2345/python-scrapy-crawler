@@ -1,5 +1,7 @@
 import scrapy
 import re
+import time
+import random
 from as_scraper.items import PostItem, PostDetailsItem
 
 THREAD_MAX_PAGE_NUM = 1
@@ -33,6 +35,10 @@ class AsSpider(scrapy.Spider):
             relative_url = "".join(filter(lambda x: 'threads' in x, a_list))
             if(relative_url):
                 thread_url = 'https://www.anime-sharing.com' + relative_url
+
+                # pause the script for a random delay
+                # between 1 and 3 seconds
+                time.sleep(random.uniform(1, 3))
                 
                 yield response.follow(thread_url, callback=self.parse_post_detail)
 
@@ -91,5 +97,9 @@ class AsSpider(scrapy.Spider):
             if int(next_page_number) <= PAGE_MAX_PAGE_NUM:
                 next_page_url = response.request.url + next_page
                 yield response.follow(next_page_url, callback= self.parse_post_detail)
+
+        # pause the script for a random delay
+        # between 1 and 3 seconds
+        time.sleep(random.uniform(1, 3))        
         
         yield post_item

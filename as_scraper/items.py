@@ -22,5 +22,5 @@ class PostItem(scrapy.Item):
     platform = scrapy.Field()
     product_id = scrapy.Field()
     title = scrapy.Field()
-    details = scrapy.Field() # This field will store a list of PostMetaItem objects
+    details = scrapy.Field() # This field will store a list of PostDetailsItem objects
 
