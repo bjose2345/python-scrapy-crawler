@@ -74,8 +74,8 @@ class MongoDBPipeline:
         )
 
     def open_spider(self, spider):
-        self.mongo_username = os.environ['MONGODB_USERNAME']
-        self.mongo_password = os.environ['MONGODB_PASSWORD']
+        self.mongo_username = os.getenv('MONGODB_USERNAME')
+        self.mongo_password = os.getenv('MONGODB_PASSWORD')
         self.client = pymongo.MongoClient(
             self.mongodb_uri, username=self.mongo_username, password=self.mongo_password)
         self.db = self.client[self.mongodb_db]

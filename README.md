@@ -5,8 +5,9 @@
 3. Activate the Python Virtual Environment: `source venv/bin/activate`
 4. Install Scrapy using pip: `pip install scrapy`
 5. To install the required modules for this python project to run you need to install the required python modules using the following command: `pip install -r requirements.txt`
-6. Listing the scrapy projects `scrapy list`
-7. Running the scrapy project: `scrapy crawl -s MONGODB_URI="mongodb+srv://<YOUR_CONNECTION_STRING>" -s MONGODB_DATABASE="scrapy" as_spider`
+6. create a .env file and add these keys with their value pairs `SCRAPEOPS_API_KEY=xxxxxxx`, `MONGODB_USERNAME=xxxxxxx`, `MONGODB_PASSWORD=xxxxxxx`
+7. Listing the scrapy projects `scrapy list`
+8. Running the scrapy project: `scrapy crawl -s MONGODB_URI="mongodb+srv://<YOUR_CONNECTION_STRING>" -s MONGODB_DATABASE="scrapy" as_spider`
 
 # Helpful Dubugging
 

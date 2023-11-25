@@ -28,6 +28,6 @@ share/python-wheels/
 MANIFEST
 venv/
 
-
 ## Custom
-data/
+output/
+.env

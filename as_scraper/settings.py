@@ -8,12 +8,17 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 
+import os
+import dotenv
+
+dotenv.load_dotenv()
+
 BOT_NAME = "as_scraper"
 
 SPIDER_MODULES = ["as_scraper.spiders"]
 NEWSPIDER_MODULE = "as_scraper.spiders"
 
-SCRAPEOPS_API_KEY = '1d7043a4-1314-47aa-8a80-8c72a6859242'
+SCRAPEOPS_API_KEY = os.getenv('SCRAPEOPS_API_KEY')
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENDPOINT ='http://headers.scrapeops.io/v1/browser-headers'
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENABLED = True
 SCRAPEOPS_NUM_RESULT = 50
