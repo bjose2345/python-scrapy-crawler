@@ -128,7 +128,7 @@ class MongoDBPipeline:
                 values = {
                     'text': '[' + ', '.join(str(x) for x in export['external_links']) + ']',
                     'packageName': export['_id'],
-                    'comment': 'added in ' + today
+                    'comment': 'Created at ' + today
                 }
 
                 after_replace = re.sub('<(.+?) placeholder>', lambda match: values.get(match.group(1)), template_json)
