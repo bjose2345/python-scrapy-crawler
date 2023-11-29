@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo
+    enviroment:
+      MONGO_INITDB_ROOT_USERNAMER: REPLACE+WITH+SOME+USERNAME
+      MONGO_INITDB_TOOR_PASSWORD: REPLACE+WITH+SOME+PASSWORD
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data/db
+volumes:
+  mongodata:
+    driver: local
