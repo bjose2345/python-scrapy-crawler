@@ -23,6 +23,32 @@ SCRAPEOPS_FAKE_BROWSER_HEADER_ENDPOINT ='http://headers.scrapeops.io/v1/browser-
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENABLED = True
 SCRAPEOPS_NUM_RESULT = 50
 
+THREAD_MAX_PAGE_NUM = 1
+PAGE_MAX_PAGE_NUM = 2
+
+PLATFORMS = [
+    'getchu.com',
+    'dlsite.com',
+    'fanza.net',
+    'dmm.co.jp'
+]
+
+FILEHOSTS = [
+    'rapidgator.net',
+    'mexa.sh',
+    'katfile.com',
+    'fikper.com',
+    'ddownload.com',
+    'uploadrocket.net',
+    'rosefile.net',
+    'k2s.cc',
+    'fboom.me',
+    'mega.nz',
+    'ul.to'
+]
+
+DELIMETERS = ["/", "="]
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "as_scraper (+http://www.yourdomain.com)"
 

@@ -3,18 +3,13 @@ import re
 import time
 import random
 from as_scraper.items import PostItem, PostDetailsItem
+from scrapy.utils.project import get_project_settings
 
-THREAD_MAX_PAGE_NUM = 1
-PAGE_MAX_PAGE_NUM = 2
-
-PLATFORMS = [
-    'getchu.com',
-    'dlsite.com',
-    'fanza.net',
-    'dmm.co.jp'
-]
-
-DELIMETERS = ["/", "="]
+settings=get_project_settings()
+THREAD_MAX_PAGE_NUM = settings.get('THREAD_MAX_PAGE_NUM')
+PAGE_MAX_PAGE_NUM = settings.get('PAGE_MAX_PAGE_NUM')
+PLATFORMS = settings.get('PLATFORMS')  
+DELIMETERS = settings.get('DELIMETERS')
 
 class AsSpider(scrapy.Spider):
 
@@ -27,7 +22,7 @@ class AsSpider(scrapy.Spider):
         self.pattern = "[" + re.escape("".join(DELIMETERS)) + "]"
 
     def parse(self, response):
-         
+                 
         threads = response.css('div.structItemContainer div.structItem-title')
 
         for thread in threads:
@@ -43,12 +38,13 @@ class AsSpider(scrapy.Spider):
                 yield response.follow(thread_url, callback=self.parse_post_detail)
 
         next_page_response = response.css('li.pageNav-page--later a::attr(href)').get() #'/forums/hentai-games.38/page-?
-        next_page = next_page_response.rpartition('/')[2] #page-?        
-        next_page_number = re.sub(r"\D", "", next_page) #?
+        if next_page_response is not None:
+            next_page = next_page_response.rpartition('/')[2] #page-?
+            next_page_number = re.sub(r"\D", "", next_page) #?
         
-        if int(next_page_number) <= THREAD_MAX_PAGE_NUM:
-            next_page_url = response.request.url + next_page            
-            yield response.follow(next_page_url, callback= self.parse)
+            if int(next_page_number) <= THREAD_MAX_PAGE_NUM:
+                next_page_url = response.request.url + next_page
+                yield response.follow(next_page_url, callback= self.parse)
 
     def parse_post_detail(self, response):
 

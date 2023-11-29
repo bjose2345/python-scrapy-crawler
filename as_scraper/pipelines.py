@@ -12,20 +12,10 @@ import re
 from datetime import datetime
 import pymongo
 from pathlib import Path
+from scrapy.utils.project import get_project_settings
 
-FILEHOSTS = [
-    'rapidgator.net',
-    'mexa.sh',
-    'katfile.com',
-    'fikper.com',
-    'ddownload.com',
-    'uploadrocket.net',
-    'rosefile.net',
-    'k2s.cc',
-    'fboom.me',
-    'mega.nz',
-    'ul.to'
-]
+settings=get_project_settings()
+FILEHOSTS = settings.get('FILEHOSTS')
 
 class AsScraperFormatPipeline:
     def process_item(self, item, spider):
@@ -70,14 +60,17 @@ class MongoDBPipeline:
     def from_crawler(cls, crawler):
         return cls(
             mongodb_uri=crawler.settings.get('MONGODB_URI'),
-            mongodb_db=crawler.settings.get('MONGODB_DATABASE', 'as_items')
+            mongodb_db=crawler.settings.get('MONGODB_DATABASE')
         )
 
     def open_spider(self, spider):
         self.mongo_username = os.getenv('MONGODB_USERNAME')
         self.mongo_password = os.getenv('MONGODB_PASSWORD')
         self.client = pymongo.MongoClient(
-            self.mongodb_uri, username=self.mongo_username, password=self.mongo_password)
+                        self.mongodb_uri, 
+                        username=self.mongo_username, 
+                        password=self.mongo_password
+                        )
         self.db = self.client[self.mongodb_db]
 
     def close_spider(self, spider):
