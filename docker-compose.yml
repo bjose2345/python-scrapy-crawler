@@ -5,8 +5,8 @@ services:
       - ./as_scraper/.env
     image: mongo
     environment:
-      MONGO_INITDB_ROOT_USERNAMER: MONGODB_USERNAME
-      MONGO_INITDB_TOOR_PASSWORD: MONGODB_PASSWORD
+      MONGO_INITDB_ROOT_USERNAME: MONGODB_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: MONGODB_PASSWORD
     ports:
       - 27017:27017
     volumes:
