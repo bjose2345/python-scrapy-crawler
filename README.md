@@ -9,7 +9,7 @@
 7. Listing the scrapy projects `scrapy list`
 8. Running the scrapy project: `scrapy crawl -s MONGODB_URI="mongodb+srv://<YOUR_CONNECTION_STRING>" -s MONGODB_DATABASE="scrapy" as_spider`
 
-# Helpful Dubugging
+# Helpful Debugging
 
 If you have issues running the `pip install -r requirements.txt` command this can be due to some things not being up to date on your computer.
 
