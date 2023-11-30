@@ -40,11 +40,11 @@ class CleanEmptyPostsPipeline:
 
         adapter = ItemAdapter(item)
         
-        details = adapter.get('details')
-        for detail in details:
+        details = adapter.get('details')        
+        for detail in details[:]:            
             if not detail['external_links']:
                 details.remove(detail)
-
+       
         return item
 
 class MongoDBPipeline:
@@ -137,8 +137,9 @@ class MongoDBPipeline:
     def process_item(self, item, spider):
         exists = self.db[self.collection_name].find_one({'thread_id': dict(item)['thread_id']}, {'_id': False, 'thread_id': True})
         if not exists:
-            ## insert if not exists
-            self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+            ## insert if not exists and details is not empty
+            if dict(item)['details']:
+                self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
         else:            
             details = dict(item)['details']
             ## Remove an document from DETAILS array when created_date is different from
