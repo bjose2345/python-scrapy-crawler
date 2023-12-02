@@ -43,7 +43,7 @@ class AsSpider(scrapy.Spider):
             next_page_number = re.sub(r"\D", "", next_page) #?
         
             if int(next_page_number) <= THREAD_MAX_PAGE_NUM:
-                next_page_url = response.request.url + next_page
+                next_page_url = response.request.url + 'page-' + next_page_number
                 yield response.follow(next_page_url, callback= self.parse)
 
     def parse_post_detail(self, response):

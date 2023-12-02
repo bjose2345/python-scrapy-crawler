@@ -48,6 +48,7 @@ FILEHOSTS = [
 ]
 
 DELIMETERS = ["/", "="]
+OUTPUT = '/output'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "as_scraper (+http://www.yourdomain.com)"

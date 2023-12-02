@@ -16,6 +16,7 @@ from scrapy.utils.project import get_project_settings
 
 settings=get_project_settings()
 FILEHOSTS = settings.get('FILEHOSTS')
+OUTPUT = settings.get('OUTPUT')
 
 class AsScraperFormatPipeline:
     def process_item(self, item, spider):
@@ -129,7 +130,7 @@ class MongoDBPipeline:
                 output.mkdir(exist_ok=True)
                 filename = export['_id'] + '_' + today + '.crawljob'
                 
-                with open(output / filename, 'w') as f:
+                with open(OUTPUT + os.sep + filename, 'w') as f:
                     f.write(after_replace)
         
         self.client.close()
