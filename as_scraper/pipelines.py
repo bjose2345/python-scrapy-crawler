@@ -126,11 +126,11 @@ class MongoDBPipeline:
                 }
 
                 after_replace = re.sub('<(.+?) placeholder>', lambda match: values.get(match.group(1)), template_json)
-                output = Path().resolve() / 'output'
-                output.mkdir(exist_ok=True)
+                output_path = Path(OUTPUT)
+                output_path.mkdir(exist_ok=True)
                 filename = export['_id'] + '_' + today + '.crawljob'
                 
-                with open(OUTPUT + os.sep + filename, 'w') as f:
+                with open(output_path + os.sep + filename, 'w') as f:
                     f.write(after_replace)
         
         self.client.close()
