@@ -4,7 +4,7 @@
 "packageName": "<packageName placeholder>",
 "comment": "<comment placeholder>",
 "autoConfirm": "TRUE",
-"autoStart": "TRUE",
+"autoStart": "FALSE",
 "extractAfterDownload": "FALSE",
 "forcedStart": "FALSE",
 "overwritePackagizerEnabled": false
