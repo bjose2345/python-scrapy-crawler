@@ -9,9 +9,7 @@ from itemadapter import ItemAdapter
 import sys
 import os
 import re
-from datetime import datetime
 import pymongo
-from pathlib import Path
 from scrapy.utils.project import get_project_settings
 
 settings=get_project_settings()
@@ -52,17 +50,10 @@ class MongoDBPipeline:
 
     collection_name = "as_items"
 
-    def __init__(self, mongodb_uri, mongodb_db):
-        self.mongodb_uri = mongodb_uri
-        self.mongodb_db = mongodb_db
+    def __init__(self):
+        self.mongodb_uri = os.getenv('MONGODB_URI')
+        self.mongodb_db = os.getenv('MONGODB_DB')
         if not self.mongodb_uri: sys.exit("You need to provide a Connection String.")
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        return cls(
-            mongodb_uri=crawler.settings.get('MONGODB_URI'),
-            mongodb_db=crawler.settings.get('MONGODB_DATABASE')
-        )
 
     def open_spider(self, spider):
         self.mongo_username = os.getenv('MONGODB_USERNAME')
@@ -74,65 +65,7 @@ class MongoDBPipeline:
                         )
         self.db = self.client[self.mongodb_db]
 
-    def close_spider(self, spider):
-
-        ## create a crawljob file for each one of the post found, with stage null and grouped by product_id
-        exports = self.db[self.collection_name].aggregate([
-            {
-                "$unwind": "$details"
-            },
-            {
-                "$unwind": "$details.external_links"
-            },    
-            {
-                "$match": {
-                  "product_id": {
-                    "$ne": None
-                  },
-                  "details.stage": None
-                }
-            },
-            {
-                "$group": {
-                  "_id": "$product_id",
-                  "post_id": {
-                    "$push": "$details.post_id"
-                  },
-                  "external_links": {
-                    "$push": "$details.external_links"
-                  }
-                }
-            }    
-        ])
-
-
-        p = Path(__file__).with_name('crawljob.template')
-
-        if exports:
-            today = datetime.today().strftime('%Y%m%d-%H%M%S')
-
-            with p.open('r') as f:
-                template_json = f.read()
-
-            for export in exports:
-                for post_id in export['post_id']:
-                    ## update stage to FETCHED status
-                    self.db[self.collection_name].update_one({'details.post_id': post_id}, {'$set': {'details.$[].stage': 'FETCHED'}})
-                    
-                values = {
-                    'text': '[' + ', '.join(str(x) for x in export['external_links']) + ']',
-                    'packageName': export['_id'],
-                    'comment': 'Created at ' + today
-                }
-
-                after_replace = re.sub('<(.+?) placeholder>', lambda match: values.get(match.group(1)), template_json)
-                output_path = Path(OUTPUT)
-                output_path.mkdir(exist_ok=True)
-                filename = export['_id'] + '_' + today + '.crawljob'
-                
-                with open(output_path + os.sep + filename, 'w') as f:
-                    f.write(after_replace)
-        
+    def close_spider(self, spider):        
         self.client.close()
 
     def process_item(self, item, spider):

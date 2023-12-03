@@ -9,9 +9,6 @@
 
 
 import os
-import dotenv
-
-dotenv.load_dotenv()
 
 BOT_NAME = "as_scraper"
 
@@ -23,7 +20,7 @@ SCRAPEOPS_FAKE_BROWSER_HEADER_ENDPOINT ='http://headers.scrapeops.io/v1/browser-
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENABLED = True
 SCRAPEOPS_NUM_RESULT = 50
 
-THREAD_MAX_PAGE_NUM = 5
+THREAD_MAX_PAGE_NUM = 1
 PAGE_MAX_PAGE_NUM = 2
 
 PLATFORMS = [
@@ -48,7 +45,6 @@ FILEHOSTS = [
 ]
 
 DELIMETERS = ["/", "="]
-OUTPUT = '/output'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "as_scraper (+http://www.yourdomain.com)"

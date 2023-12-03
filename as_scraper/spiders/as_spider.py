@@ -93,7 +93,7 @@ class AsSpider(scrapy.Spider):
         next_page_response = response.css('li.pageNav-page--later a::attr(href)').get() #'/threads/xxx.xxx/page-?
         if next_page_response is not None:
             ## add the current page to the thread-id, to make it unique
-            post_item['thread_id'] = post_item['thread_id'] + '-' + response.css('li.pageNav-page--current a::text').get()
+            post_item['thread_id'] = post_item['thread_id'] + '/page-' + response.css('li.pageNav-page--current a::text').get()
             next_page = next_page_response.rpartition('/')[2] #page-?        
             next_page_number = re.sub(r"\D", "", next_page) #?
             
