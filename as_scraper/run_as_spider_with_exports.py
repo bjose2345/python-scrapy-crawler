@@ -10,7 +10,7 @@ import dotenv
 ## if you set .env in different directory, put the directory address load_dotenv("directory_of_.env)
 dotenv.load_dotenv()
 
-OUTPUT_DIRECTORY = os.path.join(os.getcwd(), r'ourput')
+OUTPUT_DIRECTORY = os.path.join(os.getcwd(), r'output')
 
 mongodb_uri = os.getenv('MONGODB_URI')
 mongodb_db = os.getenv('MONGODB_DB')
