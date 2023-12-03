@@ -3,7 +3,7 @@
 "text": "<text placeholder>",
 "packageName": "<packageName placeholder>",
 "comment": "<comment placeholder>",
-"autoConfirm": "TRUE",
+"autoConfirm": "FALSE",
 "autoStart": "FALSE",
 "extractAfterDownload": "FALSE",
 "forcedStart": "FALSE",
