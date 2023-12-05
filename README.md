@@ -7,7 +7,7 @@
 5. To install the required modules for this python project to run you need to install the required python modules using the following command: `pip install -r requirements.txt`
 6. create a .env file and add these keys with their value pairs `SCRAPEOPS_API_KEY=xxx`, `MONGODB_USERNAME=xxx`, `MONGODB_PASSWORD=xxx` `MONGODB_URI=xxx` `MONGODB_DATABASE=xxx`
 7. Listing the scrapy projects `scrapy list`
-8. Running the scrapy project: `python3 run_as_spider_without_exports` in case just want to run and save or `python3 run_as_spider_with_exports` to run, save and export
+8. Running the scrapy project from the `Scripts` folder: `python3 run_as_spider_without_exports` in case just want to run the as_spider script and save the results in mongodb, `python3 run_as_spider_with_exports` to run, save and export the results (into .cralwjobs for jdownloader) or `python3 run_only_exports` to run only the exports
 
 # Helpful Debugging
 
