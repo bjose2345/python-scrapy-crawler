@@ -6,5 +6,5 @@ from exports import *
 ## check the description for each export
 ## in case we don't need any of them we can only comment it
 group_by_platform_id.execute()
-group_by_thread_id_with_single_pages.execute()
+group_by_thread_id_with_single_page.execute()
 group_by_thread_id_with_multi_pages.execute()
