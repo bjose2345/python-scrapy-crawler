@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from exports import *
@@ -8,5 +10,9 @@ process = CrawlerProcess(get_project_settings())
 process.crawl("as_spider")
 process.start()  # the script will block here until the crawling is finished
 
-## create a crawljob file for each one of the post found with stage null and grouped by product_id
+## create a crawljob file for each one of the exports added next,
+## check the description for each export
+## in case we don't need any of them we can only comment it
 group_by_platform_id.execute()
+group_by_thread_id_with_single_pages.execute()
+group_by_thread_id_with_multi_pages.execute()

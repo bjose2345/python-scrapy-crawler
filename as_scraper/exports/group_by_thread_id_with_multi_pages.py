@@ -20,8 +20,8 @@ collection_name = "as_items"
 
 def execute():
 
-    ## this export is when the product_id is not null
-    ## create a crawljob file for each one of the post found with stage null and grouped by product_id
+    ## this export is when the product_id is null and is a multi page thread
+    ## create a crawljob file for each one of the post found with stage null and grouped by thread_id 
 
     exports = db[collection_name].aggregate([
         {
@@ -33,14 +33,27 @@ def execute():
         {
             "$match": {
             "product_id": {
-                "$ne": None
+                "$eq": None
+            },
+             "thread_id": {
+                "$regex": "^.*page.*$"
             },
             "details.stage": None
             }
         },
         {
+            "$addFields": {
+            "thread_without_page": {
+                "$arrayElemAt": [{ "$split": [ "$thread_id", "/" ]}, 0]
+            }
+            }
+        },
+        {
             "$group": {
-            "_id": "$product_id",
+            "_id": "$thread_without_page",
+            "title": {
+                "$first": "$title"
+            },
             "post_id": {
                 "$push": "$details.post_id"
             },
@@ -67,7 +80,7 @@ def execute():
             values = {
                 'text': '[' + ', '.join(str(x) for x in export['external_links']) + ']',
                 'packageName': export['_id'],
-                'comment': 'Created at ' + today
+                'comment': export['title']
             }
 
             after_replace = re.sub('<(.+?) placeholder>', lambda match: values.get(match.group(1)), template_json)

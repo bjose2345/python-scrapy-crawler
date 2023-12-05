@@ -45,11 +45,11 @@ class AsSpider(scrapy.Spider):
             if int(next_page_number) <= THREAD_MAX_PAGE_NUM:
                 next_page_url = response.request.url
                 if next_page_url.find('page-') != -1:
-                    ## Contains page- substring
-                    next_page_base_url = next_page_url.rpartition('page-')[0] #split string and get firt element
+                    ## contains "page-" substring
+                    next_page_base_url = next_page_url.rpartition('page-')[0] #split string and get first element
                     next_page_url = next_page_base_url + next_page
                 else:
-                    ## Does not contains page- substring
+                    ## does not contains "page-" substring
                     next_page_url += next_page
                 yield response.follow(next_page_url, callback= self.parse)
 
@@ -100,11 +100,11 @@ class AsSpider(scrapy.Spider):
             if int(next_page_number) <= PAGE_MAX_PAGE_NUM:
                 next_page_url = response.request.url
                 if next_page_url.find('page-') != -1:
-                    ## Contains page- substring
-                    next_page_base_url = next_page_url.rpartition('page-')[0] #split string and get firt element
+                    ## contains "page-" substring
+                    next_page_base_url = next_page_url.rpartition('page-')[0] #split string and get first element
                     next_page_url = next_page_base_url + next_page
                 else:
-                    ## Does not contains page- substring
+                    ## does not contains "page-" substring
                     next_page_url += next_page
                 yield response.follow(next_page_url, callback= self.parse_post_detail)
 
