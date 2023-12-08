@@ -73,9 +73,8 @@ def execute():
             template_json = f.read()
 
         for export in exports:
-            for post_id in export['post_id']:
-                ## update stage to FETCHED status
-                db[collection_name].update_one({'details.post_id': post_id}, {'$set': {'details.$[].stage': 'FETCHED'}}) 
+            ## update stage to FETCHED status
+            db[collection_name].update_many({'details.post_id': {'$in': export['post_id']}}, {'$set': {'details.$[].stage': 'FETCHED'}})
 
             values = {
                 'text': '[' + ', '.join(str(x) for x in export['external_links']) + ']',
