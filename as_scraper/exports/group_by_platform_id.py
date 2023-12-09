@@ -4,7 +4,8 @@ from datetime import datetime
 from pathlib import Path
 import pymongo
 
-OUTPUT_DIRECTORY = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'output')) 
+# change this var to use a different path form the default one [as_craper/output]
+output_directory = None
 
 mongodb_uri = os.getenv('MONGODB_URI')
 mongodb_db = os.getenv('MONGODB_DB')
@@ -20,6 +21,7 @@ collection_name = "as_items"
 
 def execute():
 
+    global output_directory
     ## this export is when the product_id is not null
     ## create a crawljob file for each one of the post found with stage null and grouped by product_id
 
@@ -70,7 +72,9 @@ def execute():
             }
 
             after_replace = re.sub('<(.+?) placeholder>', lambda match: values.get(match.group(1)), template_json)
-            output_directory_path = Path(OUTPUT_DIRECTORY)
+            if output_directory is None:
+                output_directory = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'output'))
+            output_directory_path = Path(output_directory)
             output_directory_path.mkdir(exist_ok=True)
             filename = export['_id'] + '_' + today + '.crawljob'
             
