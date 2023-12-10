@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 import pymongo
 
-# change this var to use a different path form the default one [as_craper/output]
+# change this var to use a different path from the default one [as_craper/output]
 _output_directory = None
 
 mongodb_uri = os.getenv('MONGODB_URI')
