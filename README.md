@@ -8,7 +8,8 @@
 6. create a .env file and add these keys with their value pairs `SCRAPEOPS_API_KEY=xxx`, `MONGODB_USERNAME=xxx`, `MONGODB_PASSWORD=xxx` `MONGODB_URI=xxx` `MONGODB_DATABASE=xxx`
 7. Listing the scrapy projects `scrapy list`
 8. In Linux you will also be required to make the scripts in `Scripts` folder executable: `chmod +x ./run_as_spider_without_exports`
-9. Running the scrapy project from the `Scripts` folder: `./run_as_spider_without_exports` in case just want to run the as_spider script and save the results in mongodb, `./run_as_spider_with_exports` to run, save and export the results (into .cralwjobs for jdownloader) or `./run_only_exports` to run only the exports
+9. Running the scrapy project from the `Scripts` folder: `./run_as_spider_without_exports` in case just want to run the as_spider script and save the results in mongodb, `./run_as_spider_with_exports` to run, save and export the results (into .cralwjobs for jdownloader) or `./run_only_exports` to run only the exports. For Windows will only require to use the `py` or `python` command.
+10. (Optional) Install mongodb locally through the docker-compose.yml file: `docker compose --env-file route/to/your/.env-file up -d`
 
 # Helpful Debugging
 
