@@ -10,19 +10,33 @@
 
 import os
 
-BOT_NAME = "as_scraper"
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-SPIDER_MODULES = ["as_scraper.spiders"]
-NEWSPIDER_MODULE = "as_scraper.spiders"
+BOT_NAME = 'as_scraper'
+
+SPIDER_MODULES = ['as_scraper.spiders']
+NEWSPIDER_MODULE = 'as_scraper.spiders'
 
 SCRAPEOPS_API_KEY = os.getenv('SCRAPEOPS_API_KEY')
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENDPOINT ='http://headers.scrapeops.io/v1/browser-headers'
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENABLED = True
 SCRAPEOPS_NUM_RESULT = 50
 
+## Insert Your List in the proxies.txt file (one per line:):
+# ex:
+# proxy1.com:8000
+# proxy2.com:8031
+# proxy3.com:8032
+ROTATING_PROXY_LIST_PATH = os.path.join(__location__, 'proxies.txt')
+
+## the number of pages we want to scrape in the general forum
 THREAD_MAX_PAGE_NUM = 1
+
+## the number of pages we want to scrape for each indivial thread
 PAGE_MAX_PAGE_NUM = 2
 
+## Insert here all the plarforms need to be searched
 PLATFORMS = [
     'getchu.com',
     'dlsite.com',
@@ -30,6 +44,8 @@ PLATFORMS = [
     'dmm.co.jp'
 ]
 
+## Insert here all the filehost need to be searched
+## this is used later to filter only those filehost that exists in this list
 FILEHOSTS = [
     'rapidgator.net',
     'mexa.sh',
@@ -44,6 +60,8 @@ FILEHOSTS = [
     'ul.to'
 ]
 
+## The delimiters used for the platfomr regex
+## Don't change this unless you know what are you doing
 DELIMETERS = ["/", "="]
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -86,6 +104,8 @@ ROBOTSTXT_OBEY = False
 DOWNLOADER_MIDDLEWARES = {
    "as_scraper.middlewares.AsScraperDownloaderMiddleware": 543,
    "as_scraper.middlewares.ScrapeOpsFakeBrowserHeaderAgentMiddleware": 400,
+   "rotating_proxies.middlewares.RotatingProxyMiddleware": 610,
+   "rotating_proxies.middlewares.BanDetectionMiddleware": 620,
    #"scrapeops_scrapy.middleware.retry.RetryMiddleware": 550,
    #"scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
 }
