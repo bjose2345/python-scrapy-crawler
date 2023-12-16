@@ -23,20 +23,21 @@ SCRAPEOPS_FAKE_BROWSER_HEADER_ENDPOINT ='http://headers.scrapeops.io/v1/browser-
 SCRAPEOPS_FAKE_BROWSER_HEADER_ENABLED = True
 SCRAPEOPS_NUM_RESULT = 50
 
-## Insert Your List in the proxies.txt file (one per line:):
+## Insert your list in the proxies.txt file (one per line:):
 # ex:
 # proxy1.com:8000
 # proxy2.com:8031
 # proxy3.com:8032
 ROTATING_PROXY_LIST_PATH = os.path.join(__location__, 'proxies.txt')
 
-## the number of pages we want to scrape in the general forum
+## The number of pages we want to scrape in the general forum
 THREAD_MAX_PAGE_NUM = 1
 
-## the number of pages we want to scrape for each indivial thread
+## The number of pages we want to scrape for each indivial thread
 PAGE_MAX_PAGE_NUM = 2
 
-## Insert here all the plarforms need to be searched
+## Insert here all the plarforms that need to be searched here.
+## this list is used later to filter the extenal links captured by the spider
 PLATFORMS = [
     'getchu.com',
     'dlsite.com',
@@ -44,8 +45,8 @@ PLATFORMS = [
     'dmm.co.jp'
 ]
 
-## Insert here all the filehost need to be searched
-## this is used later to filter only those filehost that exists in this list
+## Insert all filehosts that need to be searched here.
+## this list is used later to filter the extenal links captured by the spider
 FILEHOSTS = [
     'rapidgator.net',
     'mexa.sh',
@@ -60,8 +61,8 @@ FILEHOSTS = [
     'ul.to'
 ]
 
-## The delimiters used for the platfomr regex
-## Don't change this unless you know what are you doing
+## The delimiters used for the platforms regex
+## do not change this unless you know what are you doing
 DELIMETERS = ["/", "="]
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
