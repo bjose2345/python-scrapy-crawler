@@ -9,6 +9,7 @@ services:
       - 27017:27017
     volumes:
       - mongodata:/data/db
+    restart: unless-stopped
 volumes:
   mongodata:
     driver: local
