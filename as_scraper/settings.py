@@ -105,8 +105,8 @@ ROBOTSTXT_OBEY = False
 DOWNLOADER_MIDDLEWARES = {
    "as_scraper.middlewares.AsScraperDownloaderMiddleware": 543,
    "as_scraper.middlewares.ScrapeOpsFakeBrowserHeaderAgentMiddleware": 400,
-   "rotating_proxies.middlewares.RotatingProxyMiddleware": 610,
-   "rotating_proxies.middlewares.BanDetectionMiddleware": 620,
+   #"rotating_proxies.middlewares.RotatingProxyMiddleware": 610,
+   #"rotating_proxies.middlewares.BanDetectionMiddleware": 620,
    #"scrapeops_scrapy.middleware.retry.RetryMiddleware": 550,
    #"scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
 }
